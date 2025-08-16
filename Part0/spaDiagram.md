@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
 	participant browser
 	participant server
@@ -17,4 +18,5 @@ browser->>server: GET data.json
 activate server
 server-->>browser: 200, JSON
 deactivate server
-Note right of browser: So far, this is the same as for the non-spa version, the browser requests the page, 
+Note right of browser: So far, this is the same as for the non-spa version, the browser requests the page and displays existing notes from the json data
+```
