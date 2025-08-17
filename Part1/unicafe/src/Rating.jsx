@@ -1,8 +1,8 @@
 export const Rating = ({ name, total }) => {
   return (
-    <div>
-      <p>{name}</p>
-      <p>{total}</p>
-    </div>
+    <tr>
+      <td>{name}</td>
+      <td>{total}</td>
+    </tr>
   );
 };

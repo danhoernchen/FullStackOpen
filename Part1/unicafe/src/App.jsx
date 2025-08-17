@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { Button } from "./Button";
-import { Average } from "./Average";
-import { Positive } from "./Positive";
 import { Statistics } from "./Statistics";
 
 const App = () => {
@@ -35,8 +33,6 @@ const App = () => {
       <Button text="Neutral" clickHandler={handleClick} />
       <Button text="Bad" clickHandler={handleClick} />
       <Statistics ratings={ratings} />
-      <Average ratings={ratings} />
-      <Positive ratings={ratings} />
     </div>
   );
 };
