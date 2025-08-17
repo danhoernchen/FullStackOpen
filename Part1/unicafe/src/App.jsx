@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Rating } from "./Rating";
 import { Button } from "./Button";
-
+import { Average } from "./Average";
+import { Positive } from "./Positive";
 const App = () => {
   // save clicks of each button to its own state
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
+  const ratings = [good, neutral, bad];
 
   const handleClick = (caller) => {
     const rating = caller.currentTarget.id;
@@ -35,6 +37,8 @@ const App = () => {
       <Rating name="Good" total={good} />
       <Rating name="Neutral" total={neutral} />
       <Rating name="Bad" total={bad} />
+      <Average ratings={ratings} />
+      <Positive ratings={ratings} />
     </div>
   );
 };
