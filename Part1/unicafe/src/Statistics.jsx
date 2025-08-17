@@ -4,9 +4,15 @@ export const Statistics = ({ ratings }) => {
   return (
     <div>
       <h2>Statistics</h2>
-      <Rating name="Good" total={good} />
-      <Rating name="Neutral" total={neutral} />
-      <Rating name="Bad" total={bad} />
+      {!good && !neutral && !bad ? (
+        "No Ratings yet"
+      ) : (
+        <div>
+          <Rating name="Good" total={good} />
+          <Rating name="Neutral" total={neutral} />
+          <Rating name="Bad" total={bad} />
+        </div>
+      )}
     </div>
   );
 };
