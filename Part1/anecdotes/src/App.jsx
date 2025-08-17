@@ -18,10 +18,26 @@ const App = () => {
     const randNum = Math.floor(Math.random() * anecdotes.length);
     setSelected(randNum);
   };
+  const voteArray = new Array(anecdotes.length + 1).fill(0);
+  const [votes, castVote] = useState(voteArray);
+  const voteClick = () => {
+    const newVotes = [...votes];
+    newVotes[selected] += 1;
+    castVote(newVotes);
+  };
+  const max = Math.max(...votes);
   return (
     <div>
       <div>{anecdotes[selected]}</div>
-      <Button text="Random Anecdote" clickHandler={randClick} />
+      <div>Has {votes[selected]} Votes</div>
+      <div>
+        <Button text="Random Anecdote" clickHandler={randClick} />
+        <Button text="Vote for Anecdote" clickHandler={voteClick} />
+      </div>
+      <div>
+        <h2>Anecdote with most votes</h2>
+        <p>{anecdotes[votes.indexOf(max)]}</p>
+      </div>
     </div>
   );
 };
