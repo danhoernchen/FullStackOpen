@@ -1,18 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NewPerson } from "./NewPerson";
 import { Numbers } from "./Numbers";
 import { Search } from "./Search";
+import axios from "axios";
 
 const App = () => {
-  const initialPersons = [
-    { name: "Arto Hellas", number: "040-123456", id: 1 },
-    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
-  ];
-  const [persons, setPersons] = useState(initialPersons);
+  const [persons, setPersons] = useState([]);
   const [searchInput, setSearchInput] = useState("");
-
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/persons")
+      .then((res) => setPersons(res.data));
+  });
   const handleSearchInput = (el) => {
     setSearchInput(el.target.value);
   };
