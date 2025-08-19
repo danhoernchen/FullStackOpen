@@ -1,14 +1,21 @@
 import { useState } from "react";
+import entriesUtil from "./utils/entries.js";
 
-export const NewPerson = ({ persons, setPersons }) => {
+export const NewPerson = ({ persons }) => {
   const handleSubmit = (el) => {
     el.preventDefault();
     const newPerson = { name: newName, number: newNumber };
     const alreadyExisting = persons.filter((person) => person.name === newName);
     if (alreadyExisting.length > 0) {
-      alert(`${newName} is already in phonebook!`);
+      if (alreadyExisting[0].number === newNumber)
+        alert(`${newName} is already in phonebook!`);
+      else {
+        if (confirm(`Do you want to update the number for ${newName}?`)) {
+          entriesUtil.updateEntry(alreadyExisting[0].id, newPerson);
+        }
+      }
     } else {
-      setPersons(persons.concat(newPerson));
+      entriesUtil.addEntry(newPerson);
     }
   };
   const [newName, setNewName] = useState("");

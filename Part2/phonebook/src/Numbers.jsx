@@ -1,3 +1,5 @@
+import { Entry } from "./Entry";
+
 export const Numbers = ({ persons, searchInput }) => {
   const filterPersons = () => {
     const result = persons.filter((person) =>
@@ -10,20 +12,12 @@ export const Numbers = ({ persons, searchInput }) => {
       <h3>Numbers</h3>
       {searchInput.length > 0 ? (
         filterPersons().length > 0 ? (
-          filterPersons().map((person) => (
-            <div key={person.name}>
-              {person.name} - {person.number}
-            </div>
-          ))
+          filterPersons().map((person) => <Entry person={person} />)
         ) : (
           <div>No Results</div>
         )
       ) : (
-        persons.map((person) => (
-          <div key={person.name}>
-            {person.name} - {person.number}
-          </div>
-        ))
+        persons.map((person) => <Entry person={person} />)
       )}
     </div>
   );
