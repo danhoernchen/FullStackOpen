@@ -1,7 +1,7 @@
 import { useState } from "react";
 import entriesUtil from "./utils/entries.js";
 
-export const NewPerson = ({ persons }) => {
+export const NewPerson = ({ persons, messageHandler, setPersons }) => {
   const handleSubmit = (el) => {
     el.preventDefault();
     const newPerson = { name: newName, number: newNumber };
@@ -11,11 +11,33 @@ export const NewPerson = ({ persons }) => {
         alert(`${newName} is already in phonebook!`);
       else {
         if (confirm(`Do you want to update the number for ${newName}?`)) {
-          entriesUtil.updateEntry(alreadyExisting[0].id, newPerson);
+          entriesUtil
+            .updateEntry(alreadyExisting[0].id, newPerson)
+            .then((res) => {
+              console.log(res);
+              const newPersons = [...persons];
+              newPersons.map((person) =>
+                alreadyExisting[0].id === person.id ? res : person
+              );
+              messageHandler({
+                message: `Updated ${newName}`,
+                type: "success",
+              });
+            })
+            .catch(
+              messageHandler({
+                message: `${newName} was already deleted`,
+                type: "alert",
+              })
+            );
         }
       }
     } else {
-      entriesUtil.addEntry(newPerson);
+      entriesUtil.addEntry(newPerson).then((res) => {
+        console.log(res);
+        setPersons(persons.concat(res));
+        messageHandler({ message: `Added ${newName}`, type: "success" });
+      });
     }
   };
   const [newName, setNewName] = useState("");
