@@ -4,8 +4,23 @@ const { stringHash } = require("./stringHash.js");
 const app = express();
 const fs = require("fs");
 const { stringify } = require("querystring");
+const morgan = require("morgan");
 
 app.use(express.json());
+morgan.token("body", (req, res) => JSON.stringify(req.body));
+
+app.use((req, res, next) => {
+  if (req.method === "POST") {
+    app.use(
+      morgan(
+        ":method :url :status :res[content-length] - :response-time ms :body"
+      )
+    );
+  } else {
+    app.use(morgan("tiny"));
+  }
+  next();
+});
 
 app.get("/api/persons", (req, res) => {
   res.json(persons);
