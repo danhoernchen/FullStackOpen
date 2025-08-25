@@ -12,6 +12,8 @@ const errorHandler = (error, req, res, next) => {
   console.error(error);
   if (error.name === "CastError") {
     return res.status(400).send("malformed id");
+  } else if (error.name === "ValidationError") {
+    return res.status(400).json({ error: error.message });
   }
   next(error);
 };
@@ -36,7 +38,7 @@ app.get("/api/persons", (req, res) => {
   Contact.find({}).then((contacts) => res.json(contacts));
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   if (!req.body.name || !req.body.number) {
     return res.status(400).send("Missing data, please include name and number");
   }
@@ -45,7 +47,10 @@ app.post("/api/persons", (req, res) => {
     console.log(contact);
     if (contact.length === 0) {
       const newPerson = new Contact({ name, number });
-      newPerson.save().then((newcontact) => res.json(newcontact));
+      newPerson
+        .save()
+        .then((newcontact) => res.json(newcontact))
+        .catch((error) => next(error));
     } else {
       res.status(400).send("Person already in phonebook");
     }

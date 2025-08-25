@@ -33,11 +33,16 @@ export const NewPerson = ({ persons, messageHandler, setPersons }) => {
         }
       }
     } else {
-      entriesUtil.addEntry(newPerson).then((res) => {
-        console.log(res);
-        setPersons(persons.concat(res));
-        messageHandler({ message: `Added ${newName}`, type: "success" });
-      });
+      entriesUtil
+        .addEntry(newPerson)
+        .then((res) => {
+          console.log(res);
+          setPersons(persons.concat(res));
+          messageHandler({ message: `Added ${newName}`, type: "success" });
+        })
+        .catch((error) => {
+          messageHandler({ message: error.response.data.error, type: "alert" });
+        });
     }
   };
   const [newName, setNewName] = useState("");
