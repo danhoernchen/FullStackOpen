@@ -1,18 +1,18 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
-const url = process.env.MONGODB_URI;
+const url = process.env.MONGODB_URI
 
-console.log("connecting to ", url);
+console.log('connecting to ', url)
 mongoose
   .connect(url)
-  .then((res) => console.log("connected"))
-  .catch((error) => console.log("error", error.message));
+  .then((res) => console.log('connected'))
+  .catch((error) => console.log('error', error.message))
 
 const contactSchema = new mongoose.Schema({
   name: {
     type: String,
     minLength: 5,
-    required: [true, "Name is required"],
+    required: [true, 'Name is required'],
   },
   number: {
     type: String,
@@ -21,14 +21,14 @@ const contactSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid phone number`,
     },
   },
-});
+})
 
-contactSchema.set("toJSON", {
+contactSchema.set('toJSON', {
   transform: (document, returnedObj) => {
-    returnedObj.id = returnedObj._id.toString();
-    delete returnedObj._id;
-    delete returnedObj.__v;
+    returnedObj.id = returnedObj._id.toString()
+    delete returnedObj._id
+    delete returnedObj.__v
   },
-});
+})
 
-module.exports = mongoose.model("Contact", contactSchema);
+module.exports = mongoose.model('Contact', contactSchema)
