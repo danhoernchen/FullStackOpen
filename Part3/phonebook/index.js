@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const persons = require("./persons.json");
 const { stringHash } = require("./stringHash.js");
@@ -5,7 +6,7 @@ const app = express();
 const fs = require("fs");
 const { stringify } = require("querystring");
 const morgan = require("morgan");
-
+const Contact = require("./models/contact.js");
 app.use(express.json());
 morgan.token("body", (req, res) => JSON.stringify(req.body));
 app.use(express.static("dist"));
@@ -23,7 +24,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/api/persons", (req, res) => {
-  res.json(persons);
+  Contact.find({}).then((notes) => res.json(notes));
 });
 
 app.post("/api/persons", (req, res) => {
@@ -31,18 +32,15 @@ app.post("/api/persons", (req, res) => {
     return res.status(400).send("Missing data, please include name and number");
   }
   const { name, number } = req.body;
-  if (persons.filter((person) => person.name === name).length === 0) {
-    const id = stringHash(name).toString();
-    const newPerson = { id, name, number };
-    const newPersons = persons.concat(newPerson);
-    const json = JSON.stringify(newPersons);
-    fs.writeFile("./persons.json", json, "utf-8", () => {
-      console.log("callback");
-    });
-    res.send("Created");
-  } else {
-    res.status(400).send("Person already in phonebook");
-  }
+  Contact.find({ name }).then((contact) => {
+    console.log(contact);
+    if (contact.length === 0) {
+      const newPerson = new Contact({ name, number });
+      newPerson.save().then((newcontact) => res.json(newcontact));
+    } else {
+      res.status(400).send("Person already in phonebook");
+    }
+  });
 });
 
 app.get("/api/persons/:id", (req, res) => {
