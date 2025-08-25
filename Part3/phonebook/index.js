@@ -7,6 +7,15 @@ const fs = require("fs");
 const { stringify } = require("querystring");
 const morgan = require("morgan");
 const Contact = require("./models/contact.js");
+
+const errorHandler = (error, req, res, next) => {
+  console.error(error);
+  if (error.name === "CastError") {
+    return res.status(400).send("malformed id");
+  }
+  next(error);
+};
+
 app.use(express.json());
 morgan.token("body", (req, res) => JSON.stringify(req.body));
 app.use(express.static("dist"));
@@ -24,7 +33,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/api/persons", (req, res) => {
-  Contact.find({}).then((notes) => res.json(notes));
+  Contact.find({}).then((contacts) => res.json(contacts));
 });
 
 app.post("/api/persons", (req, res) => {
@@ -43,33 +52,49 @@ app.post("/api/persons", (req, res) => {
   });
 });
 
-app.get("/api/persons/:id", (req, res) => {
-  console.log(req.params.id);
-  const person = persons.find((person) => person.id === req.params.id);
-  if (person) {
-    res.json(person);
-  } else {
-    res.statusCode = 400;
-    res.send("Person not found");
-  }
+app.put("/api/persons/:id", (req, res, next) => {
+  Contact.findById(req.params.id)
+    .then((person) => {
+      if (!person) {
+        return res.status(404).end();
+      }
+      person.name = req.body.name;
+      person.number = req.body.number;
+      return person.save().then((person) => {
+        res.json(person);
+      });
+    })
+    .catch((error) => next(error));
 });
 
-app.delete("/api/persons/:id", (req, res) => {
-  const newPersons = persons.filter((person) => person.id !== req.params.id);
-  const json = JSON.stringify(newPersons);
-  fs.writeFile("./persons.json", json, "utf-8", () => {
-    console.log("callback");
+app.get("/api/persons/:id", (req, res) => {
+  console.log(req.params.id);
+  Contact.findById(req.params.id).then((person) => {
+    if (person) {
+      res.json(person);
+    } else {
+      res.statusCode = 400;
+      res.send("Person not found");
+    }
   });
-  res.send("Deleted");
+});
+
+app.delete("/api/persons/:id", (req, res, next) => {
+  Contact.findByIdAndDelete(req.params.id)
+    .then((result) => res.status(204).end())
+    .catch((error) => next(error));
 });
 
 app.get("/info", (req, res) => {
-  res.send(
-    `Phonebook has info for ${
-      persons.length
-    } people.\n\n${new Date().toString()}`
+  Contact.find({}).then((contacts) =>
+    res.send(
+      `Phonebook has info for ${
+        contacts.length
+      } people.\n\n${new Date().toString()}`
+    )
   );
 });
 
+app.use(errorHandler);
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log("Server running on port 3001"));
