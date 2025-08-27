@@ -1,18 +1,18 @@
-const config = require("./utils/config.js");
-const express = require("express");
-const mongoose = require("mongoose");
-const blogRouter = require("./controllers/blog.js");
-const { info, error } = require("./utils/logger.js");
+const express = require('express')
+const mongoose = require('mongoose')
+const config = require('./utils/config')
+const blogRouter = require('./controllers/blog')
+const { info, error } = require('./utils/logger')
 
-const app = express();
-app.use(express.json());
+const app = express()
+app.use(express.json())
 
-const mongoUrl = config.MONGODB_URI;
+const mongoUrl = config.MONGODB_URI
 mongoose
   .connect(mongoUrl)
-  .then(() => info("connected"))
-  .catch((error) => error(error));
+  .then(() => info('connected'))
+  .catch(err => error(err))
 
-app.use("/api/blogs", blogRouter);
+app.use('/api/blogs', blogRouter)
 
-module.exports = app;
+module.exports = app
