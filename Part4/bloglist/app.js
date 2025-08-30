@@ -6,6 +6,7 @@ const { info, error } = require('./utils/logger')
 
 const app = express()
 app.use(express.json())
+console.log(process.env.NODE_ENV, config.MONGODB_URI)
 
 const mongoUrl = config.MONGODB_URI
 mongoose
