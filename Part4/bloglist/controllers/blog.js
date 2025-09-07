@@ -1,5 +1,6 @@
 const blogRouter = require('express').Router()
 const { Blog } = require('../models/blog')
+const User = require('../models/user')
 
 blogRouter.get('/', async (request, response) => {
   const all = await Blog.find({})
@@ -18,6 +19,9 @@ blogRouter.get('/:id', async (req, res) => {
 blogRouter.post('/', async (request, response) => {
   try {
     const blog = new Blog(request.body)
+    const author = await User.find({})
+    // eslint-disable-next-line prefer-destructuring
+    blog.author = author[0]._id
     const saved = await blog.save()
     response.status(201).json(saved)
   } catch (error) {

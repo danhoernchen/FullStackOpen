@@ -3,6 +3,8 @@ const mongoose = require('mongoose')
 const config = require('./utils/config')
 const blogRouter = require('./controllers/blog')
 const { info, error } = require('./utils/logger')
+const userRouter = require('./controllers/user')
+const errorHandler = require('./controllers/errorHandler')
 
 const app = express()
 app.use(express.json())
@@ -15,5 +17,7 @@ mongoose
   .catch(err => error(err))
 
 app.use('/api/blogs', blogRouter)
+app.use('/api/user', userRouter)
+app.use(errorHandler)
 
 module.exports = app

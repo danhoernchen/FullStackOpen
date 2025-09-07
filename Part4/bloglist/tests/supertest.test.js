@@ -4,6 +4,8 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const { Blog } = require('../models/blog')
+const User = require('../models/user')
+const initialUsers = require('./initialUsers')
 const { initialBlogPosts, allBlogPosts } = require('./test_helper')
 
 const api = supertest(app)
@@ -12,6 +14,8 @@ describe('initializing db with predefined posts', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(initialBlogPosts)
+    await User.deleteMany({})
+    await User.insertMany(initialUsers)
   })
 
   test('blog posts are returned as json', async () => {
@@ -105,6 +109,21 @@ describe('initializing db with predefined posts', () => {
         .send(likes)
         .set('Content-Type', 'application/json')
       assert.strictEqual(updated.body.likes, 1234)
+    })
+
+    describe('creating users', () => {
+      test('create new, valid user', async () => {
+        const newUser = {
+          username: 'BruMan',
+          name: 'Bruno',
+          password: 'asdf123'
+        }
+        const savedUser = await api
+          .post('/api/user')
+          .send(newUser)
+          .set('Content-Type', 'application/json')
+        console.log(savedUser.body)
+      })
     })
     after(async () => {
       await mongoose.connection.close()
