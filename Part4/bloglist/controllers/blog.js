@@ -3,12 +3,12 @@ const { Blog } = require('../models/blog')
 const User = require('../models/user')
 
 blogRouter.get('/', async (request, response) => {
-  const all = await Blog.find({})
+  const all = await Blog.find({}).populate('user')
   response.json(all)
 })
 
 blogRouter.get('/:id', async (req, res) => {
-  const note = await Blog.findById(req.params.id)
+  const note = await Blog.findById(req.params.id).populate('user')
   if (note) {
     res.json(note)
   } else {
@@ -19,13 +19,16 @@ blogRouter.get('/:id', async (req, res) => {
 blogRouter.post('/', async (request, response) => {
   try {
     const blog = new Blog(request.body)
-    const author = await User.find({})
+    const user = await User.find({})
     // eslint-disable-next-line prefer-destructuring
-    blog.author = author[0]._id
+    blog.user = user[0]._id
     const saved = await blog.save()
+    user[0].blogPosts = user[0].blogPosts.concat(saved.id)
+    await user[0].save()
     response.status(201).json(saved)
   } catch (error) {
-    response.status(400).send(error)
+    response.status(400).json(error)
+    console.log(error)
   }
 })
 

@@ -7,7 +7,7 @@ const errorHandler = (error, request, response, next) => {
   if (error.code === 11000) {
     return response.status(400).send({ error: 'entry already exists' })
   }
-  return response.status(400).json(error)
+  return response.status(400).send(error)
 }
 
 module.exports = errorHandler
