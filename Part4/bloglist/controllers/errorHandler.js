@@ -7,6 +7,9 @@ const errorHandler = (error, request, response, next) => {
   if (error.code === 11000) {
     return response.status(400).send({ error: 'entry already exists' })
   }
+  if (error.name === 'JsonWebTokenError') {
+    return response.status(401).json({ error: 'invalid token' })
+  }
   return response.status(400).send(error)
 }
 
